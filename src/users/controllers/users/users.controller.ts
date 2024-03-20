@@ -8,14 +8,16 @@ import { UsersService } from 'src/users/users.service';
 export class UsersController {
     constructor(private readonly userService:UsersService,
 ){}
-    @Get()
-    getUsers() {
-        return this.userService.findAll();
+    @Get('')
+    getUsers(@Query('role') role:"Tester"|"Admin"|"TeamLeader"|""="",
+    // send currentPage as a query parameter of type number by default it is page one
+             @Query('currentPage') currentPage:number=1) {
+             return this.userService.findAll(role,currentPage);
     }
 
     @Post()
-    createUser(@Body() createUserDto:CreateUserDto){
-        return this.userService.createUser(createUserDto)
+    signUp(@Body() createUserDto:CreateUserDto){
+        return this.userService.signUp(createUserDto)
     }
 
     @Patch('/:activationCode')
@@ -50,7 +52,6 @@ export class UsersController {
     @Post('/:id/profile')
     createUserProfile(@Body() createUserProfile:CreateUserProfileDto, @Param('id',ParseIntPipe)id:number){
         return this.userService.createUserProfile(id,createUserProfile)
-
     }
     
 }

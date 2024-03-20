@@ -8,14 +8,17 @@ import { CreateUserProfileDto } from './dto/create-userProfile.dto';
 import { Profile } from './entities/profile.entity';
 import { MailingService } from 'src/mailing/mailing.service';
 import { SendEmailDto } from 'src/mailing/mailing.interface';
-
+import * as bcrypt from 'bcrypt'
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Profile) private readonly profileRepository: Repository<Profile>,
     private readonly mailingService:MailingService
     ) {}
-   async createUser(createUserDto:CreateUserDto){
+    private async hashPassword(password:string,salt:string):Promise<string>{//return Promise<string> because it is asyn funct
+      return bcrypt.hash(password,salt)
+    }
+   async signUp(createUserDto:CreateUserDto){
    try{ const { email } = createUserDto;
     // Check if the email already exists
       const existingUser = await this.userRepository.findOneBy({ email });
@@ -27,11 +30,14 @@ export class UsersService {
                     for(let i=0;i<25;i++){
                         activationCode+=characters[Math.floor(Math.random()*characters.length)]
                     }
+    //generate unique salt
+      const salt= await bcrypt.genSalt() //you can also save the salt to the db and add a column for the user entity
+      //newUser.salt=salt
       const newUser=  this.userRepository.create({...createUserDto,
                     CreatedAt:new Date(),
                     isActive:false,
                     activationCode:activationCode})
-
+      newUser.password= await this.hashPassword(newUser.password,salt)
 // Send activation email to the user
       const dto:SendEmailDto={
       from: 'yossrahashassi20@gmail.com',
@@ -56,9 +62,19 @@ export class UsersService {
   }
    }  
     }
-   async findAll(): Promise<User[]>{
-        const users=await this.userRepository.find({relations:['profile']})
-        return users
+   async findAll(role:"Tester"|"Admin"|"TeamLeader"|"",currentPage:number): Promise<User[]>{
+    //fixing pagination, skip elements = numbrElements* (currentPage-1) to skip the previous elements
+     const resPerPage=3
+     const skip= resPerPage * (currentPage - 1)
+     let queryBuilder = this.userRepository.createQueryBuilder('user').leftJoinAndSelect('user.profile', 'profile');
+     //Pagination is implemented using offset and limit methods of the query builder to skip elements and limit the number of results per page.
+       if(role===""){
+        const users = await queryBuilder.offset(skip).limit(resPerPage).getMany();
+        return users;
+       }
+       
+       const users= this.userRepository.findBy({role})
+       return users
     }
     async findOne(id: number) {
       const user = await this.userRepository.findOne({
