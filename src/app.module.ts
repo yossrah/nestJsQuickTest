@@ -18,6 +18,8 @@ import { Component } from './components/entities/component.entity';
 import { ParamsModule } from './params/params.module';
 import { Post } from './posts/entities/post.entity';
 import { Param } from './params/entities/param.entity';
+import { MailingService } from './mailing/mailing.service';
+import { MailingModule } from './mailing/mailing.module';
 
 
 
@@ -25,7 +27,7 @@ import { Param } from './params/entities/param.entity';
   imports: [ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
     type: 'postgres',
-    host: 'localhost',
+    host: process.env.localhost,
     port: 5432,
     password: process.env.PASSWORD,
     username: 'postgres',
@@ -33,7 +35,7 @@ import { Param } from './params/entities/param.entity';
     database: process.env.DATABASE,
     synchronize: true,
     logging: true,
-  }),UsersModule, RolesModule, CategoriesModule, NodesModule, PostsModule, ComponentsModule, ParamsModule,WorkflowModule ],
+  }),UsersModule, RolesModule, CategoriesModule, NodesModule, PostsModule, ComponentsModule, ParamsModule,WorkflowModule, MailingModule ],
   controllers: [AppController],
   providers: [AppService],
 })

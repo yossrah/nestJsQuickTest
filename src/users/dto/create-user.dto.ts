@@ -22,6 +22,7 @@ export class CreateUserDto{
         one special character`,
       })
     password:string
+    isActive:boolean
     @IsNotEmpty()
     @IsEnum(['Admin', 'Tester', 'TeamLeader'])
     role:'Admin'|'Tester'|'TeamLeader'

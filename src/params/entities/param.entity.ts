@@ -9,7 +9,7 @@ export class Param {
     name:string
     @Column({default:''})
     value:string
-    //many params belong to one component
-    @ManyToOne(()=>Component,(Component)=>Component.params)
-    component:Component
+    //many params belong to many component
+    @ManyToMany(()=>Component,(Component)=>Component.params)
+    components:Component[]
 }

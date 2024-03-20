@@ -1,6 +1,6 @@
 import { Category } from "src/categories/entities/category.entity";
 import { Param } from "src/params/entities/param.entity";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name:'components'})
 export class Component {
@@ -18,6 +18,7 @@ export class Component {
     @ManyToOne(()=>Category,(category)=>category.components)
     category:Category;
     //a compnent can have multiple params
-    @OneToMany(()=>Param,(param)=>param.component)
+    @ManyToMany(()=>Param,(param)=>param.components)
     params:Param[]
+    
 }

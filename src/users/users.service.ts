@@ -6,28 +6,47 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserProfileDto } from './dto/create-userProfile.dto';
 import { Profile } from './entities/profile.entity';
+import { MailingService } from 'src/mailing/mailing.service';
+import { SendEmailDto } from 'src/mailing/mailing.interface';
 
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectRepository(Profile) private readonly profileRepository: Repository<Profile>) {}
+    @InjectRepository(Profile) private readonly profileRepository: Repository<Profile>,
+    private readonly mailingService:MailingService
+    ) {}
    async createUser(createUserDto:CreateUserDto){
    try{ const { email } = createUserDto;
     // Check if the email already exists
-    const existingUser = await this.userRepository.findOneBy({ email });
-    if(existingUser){
+      const existingUser = await this.userRepository.findOneBy({ email });
+      if(existingUser){
         throw new ConflictException('Email already exists');
-    }
-    const characters=process.env.CHARACTERS
+      }
+      const characters=process.env.CHARACTERS
                     let activationCode="";
                     for(let i=0;i<25;i++){
                         activationCode+=characters[Math.floor(Math.random()*characters.length)]
                     }
-    const newUser=  this.userRepository.create({...createUserDto,
+      const newUser=  this.userRepository.create({...createUserDto,
                     CreatedAt:new Date(),
                     isActive:false,
                     activationCode:activationCode})
+
+// Send activation email to the user
+      const dto:SendEmailDto={
+      from: 'yossrahashassi20@gmail.com',
+      to: email,
+      subject: 'Confirm your account',
+      html: `<div>
+                <h1>Confirmation email</h1>
+                <h2>Good morning</h2>
+                <p>To activate your account, click this link:</p>
+                <a href="http://localhost:3001/quicktest/confirm/${activationCode}">Click here!</a>
+            </div>`
+}
+    await this.mailingService.sendEmail(dto);
     return this.userRepository.save(newUser);
+
    }catch(error){
     if (error instanceof ConflictException) {
       throw error; // Rethrow conflict exception
@@ -37,7 +56,7 @@ export class UsersService {
   }
    }  
     }
-   async findAll(){
+   async findAll(): Promise<User[]>{
         const users=await this.userRepository.find({relations:['profile']})
         return users
     }
@@ -57,8 +76,8 @@ export class UsersService {
     return await this.userRepository.update(id, updateUserDto)
      
     }
-   async remove(id:number){
-    return this.userRepository.delete({id})}
+   async remove(id:number): Promise<void>{
+    this.userRepository.delete({id})}
    async countAll(): Promise<number> {
         try {
           // Count the number of users in the database
@@ -69,7 +88,7 @@ export class UsersService {
           throw new Error(`Failed to count users: ${error.message}`)
         }
       }
-      async createUserProfile(id:number,createUserProfile:CreateUserProfileDto){
+  async createUserProfile(id:number,createUserProfile:CreateUserProfileDto): Promise<User>{
         const user=await this.userRepository.findOneBy({id})
         if(!user){
           throw new HttpException('User not found cannot create profile',HttpStatus.BAD_REQUEST)
@@ -80,4 +99,16 @@ export class UsersService {
         return this.userRepository.save(user)
 
       }
+  async activateAccount(activationCode:string,updateUserDto:UpdateUserDto){
+      const user=await this.userRepository.findOneBy({activationCode})
+      if(user){
+       user.isActive=true
+       return this.userRepository.save(user)
+      }
+      throw new HttpException('User not found cannot activate account',HttpStatus.BAD_REQUEST)
+      }
+  async getUsersByRole(role:"Tester"|"Admin"|"TeamLeader") {
+      const users= this.userRepository.findBy({role})
+      return users}
+      
 }
