@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query } from '@nestjs/common';
+import { AuthCredentialsDto } from 'src/users/dto/authCredentials.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { CreateUserProfileDto } from 'src/users/dto/create-userProfile.dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
@@ -18,6 +19,10 @@ export class UsersController {
     @Post()
     signUp(@Body() createUserDto:CreateUserDto){
         return this.userService.signUp(createUserDto)
+    }
+    @Post('/signIn')
+    signIn(@Body() authCredentials:AuthCredentialsDto):Promise<string>{
+        return this.userService.signIn(authCredentials)
     }
 
     @Patch('/:activationCode')

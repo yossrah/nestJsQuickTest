@@ -9,11 +9,15 @@ import { Profile } from './entities/profile.entity';
 import { MailingService } from 'src/mailing/mailing.service';
 import { SendEmailDto } from 'src/mailing/mailing.interface';
 import * as bcrypt from 'bcrypt'
+import { AuthCredentialsDto } from './dto/authCredentials.dto';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './jwt-payload.interface';
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Profile) private readonly profileRepository: Repository<Profile>,
-    private readonly mailingService:MailingService
+    private readonly mailingService:MailingService,
+    private readonly jwtService:JwtService
     ) {}
     private async hashPassword(password:string,salt:string):Promise<string>{//return Promise<string> because it is asyn funct
       return bcrypt.hash(password,salt)
@@ -61,6 +65,21 @@ export class UsersService {
       throw new InternalServerErrorException('Failed to create user');
   }
    }  
+    }
+    async signIn(authCredentials:AuthCredentialsDto):Promise<string>{
+      const {email,password}=authCredentials
+      const existingUser = await this.userRepository.findOneBy({ email });
+        if(!existingUser){
+          throw new ConflictException('unvalid credentials');
+        }
+         // Compare the provided password with the hashed password stored in the database
+         const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+         if (!isPasswordValid) {
+             throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+         }
+         const payload:JwtPayload = { email: existingUser.email, sub: existingUser.id ,role: existingUser.role};
+         const accessToken=this.jwtService.sign(payload);
+         return accessToken
     }
    async findAll(role:"Tester"|"Admin"|"TeamLeader"|"",currentPage:number): Promise<User[]>{
     //fixing pagination, skip elements = numbrElements* (currentPage-1) to skip the previous elements
