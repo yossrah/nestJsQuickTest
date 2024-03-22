@@ -2,6 +2,7 @@ import { Role } from "src/roles/entities/role.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Profile } from "./profile.entity";
 import { Post } from "src/posts/entities/post.entity";
+import { Exclude } from "class-transformer";
 
 @Entity({name:"users"})
 export class User{
@@ -13,6 +14,7 @@ export class User{
   lastname:string
   @Column({ unique:true ,type: 'varchar', length: 40})
   email: string;
+  @Exclude()
   @Column({ type: 'varchar' })
   password: string;
   @Column({ type: 'int' })

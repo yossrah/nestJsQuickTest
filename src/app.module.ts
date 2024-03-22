@@ -18,7 +18,6 @@ import { Component } from './components/entities/component.entity';
 import { ParamsModule } from './params/params.module';
 import { Post } from './posts/entities/post.entity';
 import { Param } from './params/entities/param.entity';
-import { MailingService } from './mailing/mailing.service';
 import { MailingModule } from './mailing/mailing.module';
 
 
