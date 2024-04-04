@@ -1,9 +1,9 @@
 import { Category } from "src/categories/entities/category.entity";
 import { Param } from "src/params/entities/param.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name:'components'})
-export class Component {
+export class Component extends BaseEntity{
     @PrimaryGeneratedColumn()
     id:number
     @Column({ type: 'varchar', length: 30,unique:true })

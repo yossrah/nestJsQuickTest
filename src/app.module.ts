@@ -19,6 +19,8 @@ import { ParamsModule } from './params/params.module';
 import { Post } from './posts/entities/post.entity';
 import { Param } from './params/entities/param.entity';
 import { MailingModule } from './mailing/mailing.module';
+import { Node } from './nodes/entities/node.entity';
+import { Workflow } from './workflow/entities/workflow.entity';
 
 
 
@@ -30,7 +32,7 @@ import { MailingModule } from './mailing/mailing.module';
     port: 5432,
     password: process.env.PASSWORD,
     username: 'postgres',
-    entities: [Role,User,Profile,Category,Component,Post,Param],
+    entities: [Role,User,Profile,Category,Component,Post,Param,Node,Workflow],
     database: process.env.DATABASE,
     synchronize: true,
     logging: true,

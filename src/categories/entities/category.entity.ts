@@ -1,8 +1,8 @@
 import { Component } from "src/components/entities/component.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name:"categories"})
-export class Category {
+export class Category extends BaseEntity{
     @PrimaryGeneratedColumn({type:"int"})
     id:number
     @Column({ type: 'varchar', length: 30})

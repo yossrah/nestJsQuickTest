@@ -31,4 +31,9 @@ export class WorkflowController {
   remove(@Param('id') id: string) {
     return this.workflowService.remove(+id);
   }
+
+  @Get('generateCode/:id')
+  generateCode(@Param('id') id: string) {
+    return this.workflowService.generateCode(+id);
+  }
 }

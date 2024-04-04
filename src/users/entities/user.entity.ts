@@ -1,11 +1,12 @@
 import { Role } from "src/roles/entities/role.entity";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Profile } from "./profile.entity";
 import { Post } from "src/posts/entities/post.entity";
 import { Exclude } from "class-transformer";
+import { Workflow } from "src/workflow/entities/workflow.entity";
 
 @Entity({name:"users"})
-export class User{
+export class User extends BaseEntity{
   @PrimaryGeneratedColumn({type:"bigint"})
   id:number
   @Column({ type: 'varchar', length: 30})
@@ -33,4 +34,6 @@ export class User{
   //define one to many in users : user can have many posts
   @OneToMany(()=>Post,(post)=>post.user)
   posts:Post[]
+  @OneToMany(()=>Workflow,(workflow)=>workflow.author)
+  workflows:Workflow[]
 }

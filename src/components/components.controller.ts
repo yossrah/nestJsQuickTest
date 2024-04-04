@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ComponentsService } from './components.service';
 import { CreateComponentDto } from './dto/create-component.dto';
 import { UpdateComponentDto } from './dto/update-component.dto';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Controller('components')
 export class ComponentsController {
@@ -13,10 +14,16 @@ export class ComponentsController {
   }
 
   @Get()
-  findAll() {
-    return this.componentsService.findAll();
+  findAll(@Query('category') category:Category|""="",
+  @Query('currentPage') currentPage:number=1,
+  @Query('resPerPage') resPerPage:number=10) {
+    return this.componentsService.findAll(category,currentPage,resPerPage);
   }
 
+  @Get('/countAll')
+  countAll(){
+    return this.componentsService.countAll();
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.componentsService.findOne(+id);

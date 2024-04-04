@@ -4,6 +4,7 @@ import { UpdateComponentDto } from './dto/update-component.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Component } from './entities/component.entity';
 import { Repository } from 'typeorm';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Injectable()
 export class ComponentsService {
@@ -13,12 +14,27 @@ export class ComponentsService {
     return this.componentRepository.save(new_component)
   }
 
- async findAll() {
-  const components= await this.componentRepository.find({relations:['category','params']})
+ async findAll(category:Category|"",currentPage: number,resPerPage:number) {
+  const skip= resPerPage * (currentPage - 1)
+  let queryBuilder = this.componentRepository.createQueryBuilder('component').leftJoinAndSelect('component.params', 'params');
+  if(category===""){
+    const components = await queryBuilder.offset(skip).limit(resPerPage).getMany();
     return components;
-  }
+   }
+   
+   const components= this.componentRepository.findBy({category})
+   return components
+ }
 
-  async findOne(id: number) {
+  async countAll(){
+    try {
+      const count = await this.componentRepository.count();
+      return count;
+    } catch (error) {
+      throw new Error(`Failed to count components: ${error.message}`)
+    }
+  }
+ async findOne(id: number) {
     const component=await this.componentRepository.findOneBy({id})
     return component;
   }
