@@ -4,8 +4,9 @@ import { WorkflowController } from './workflow.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Workflow } from './entities/workflow.entity';
 import { Node } from 'src/nodes/entities/node.entity';
-import { User } from 'src/users/entities/user.entity';
+
 import { UsersModule } from 'src/users/users.module';
+import { Utilisateur } from 'src/users/entities/users.entity';
 
 @Module({
   imports:[
@@ -13,7 +14,7 @@ import { UsersModule } from 'src/users/users.module';
     TypeOrmModule.forFeature([
       Workflow,
       Node,
-      User
+      Utilisateur
     ]
     ),UsersModule,
   ],

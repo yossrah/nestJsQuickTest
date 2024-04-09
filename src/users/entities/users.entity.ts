@@ -6,7 +6,7 @@ import { Exclude } from "class-transformer";
 import { Workflow } from "src/workflow/entities/workflow.entity";
 
 @Entity({name:"users"})
-export class User extends BaseEntity{
+export class Utilisateur extends BaseEntity{
   @PrimaryGeneratedColumn({type:"bigint"})
   id:number
   @Column({ type: 'varchar', length: 30})
@@ -14,7 +14,7 @@ export class User extends BaseEntity{
   @Column({ type: 'varchar', length: 30})
   lastname:string
   @Column({ unique:true ,type: 'varchar', length: 40})
-  email: string;
+  username: string;
   @Exclude()
   @Column({ type: 'varchar' })
   password: string;
@@ -23,7 +23,7 @@ export class User extends BaseEntity{
   @Column({default:false})
   isActive: Boolean;
   @Column({type:'varchar'})
-  activationCode:string
+  activationToken:string
   @Column()
   CreatedAt:Date
   @Column()

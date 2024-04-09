@@ -11,7 +11,6 @@ import { NodesModule } from './nodes/nodes.module';
 import { PostsModule } from './posts/posts.module';
 import { ComponentsModule } from './components/components.module';
 import { Role } from './roles/entities/role.entity';
-import { User } from './users/entities/user.entity';
 import { Profile } from './users/entities/profile.entity';
 import { Category } from './categories/entities/category.entity';
 import { Component } from './components/entities/component.entity';
@@ -21,22 +20,15 @@ import { Param } from './params/entities/param.entity';
 import { MailingModule } from './mailing/mailing.module';
 import { Node } from './nodes/entities/node.entity';
 import { Workflow } from './workflow/entities/workflow.entity';
+import { typeOrmConfigAsync } from './database/typeorm.config';
+import { AuthModule } from './auth/auth.module';
 
 
 
 @Module({
   imports: [ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-    type: 'postgres',
-    host: process.env.localhost,
-    port: 5432,
-    password: process.env.PASSWORD,
-    username: 'postgres',
-    entities: [Role,User,Profile,Category,Component,Post,Param,Node,Workflow],
-    database: process.env.DATABASE,
-    synchronize: true,
-    logging: true,
-  }),UsersModule, RolesModule, CategoriesModule, NodesModule, PostsModule, ComponentsModule, ParamsModule,WorkflowModule, MailingModule ],
+    TypeOrmModule.forRootAsync( typeOrmConfigAsync)
+    ,UsersModule, RolesModule, CategoriesModule, NodesModule, PostsModule, ComponentsModule, ParamsModule,WorkflowModule, MailingModule, AuthModule ],
   controllers: [AppController],
   providers: [AppService],
 })

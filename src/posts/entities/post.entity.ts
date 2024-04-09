@@ -1,4 +1,5 @@
-import { User } from "src/users/entities/user.entity";
+
+import { Utilisateur } from "src/users/entities/users.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name:"posts"})
@@ -12,6 +13,6 @@ export class Post {
     @Column()
     CreatedAt:Date
     //define many to one posts belongs to a user
-    @ManyToOne(()=>User,(user)=>user.posts)
-    user:User;
+    @ManyToOne(()=>Utilisateur,(user)=>user.posts)
+    user:Utilisateur;
 }

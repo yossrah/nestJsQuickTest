@@ -1,6 +1,6 @@
 import { IsNotEmpty } from "class-validator";
 import { Node } from "src/nodes/entities/node.entity";
-import { User } from "src/users/entities/user.entity";
+import { Utilisateur } from "src/users/entities/users.entity";
 
 export class CreateWorkflowDto {
     @IsNotEmpty()
@@ -9,9 +9,8 @@ export class CreateWorkflowDto {
     task: string;
     @IsNotEmpty()
     edgeList: any
-    @IsNotEmpty()
-    author: User;
-
+    //@IsNotEmpty()
+    author: Utilisateur;
     @IsNotEmpty()
     nodeList:Node[]
 }

@@ -9,7 +9,7 @@ export class Profile extends BaseEntity{
     @Column({ type: 'varchar', length: 30})
     lastname:string
     @Column({ unique:true ,type: 'varchar', length: 40})
-    email: string;
+    username: string;
     @Column({ type: 'int' })
     phone: number;
 }

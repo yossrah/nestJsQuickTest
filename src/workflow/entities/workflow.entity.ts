@@ -1,5 +1,6 @@
 import { Node } from "src/nodes/entities/node.entity";
-import { User } from "src/users/entities/user.entity";
+import { Utilisateur } from "src/users/entities/users.entity";
+
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name:'workflows'})
@@ -16,8 +17,8 @@ export class Workflow {
     @OneToMany(()=>Node,(node)=>node.workflow)
     nodeList:Node[]
 
-    @ManyToOne(()=>User,(author)=>author.workflows)
-    author:User
+    @ManyToOne(()=>Utilisateur,(author)=>author.workflows)
+    author:Utilisateur
 
     @Column('jsonb')
     edgeList:any

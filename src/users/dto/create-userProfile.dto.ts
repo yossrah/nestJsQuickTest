@@ -12,5 +12,5 @@ export class CreateUserProfileDto{
     @IsInt()
     phone: number
     @IsEmail()
-    email:string
+    username:string
 }

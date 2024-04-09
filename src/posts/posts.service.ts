@@ -1,23 +1,20 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {  Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { Utilisateur } from 'src/users/entities/users.entity';
+
 
 @Injectable()
 export class PostsService {
   constructor(@InjectRepository(Post) private readonly postRepository:Repository<Post>,
-  @InjectRepository(User) private readonly userRepository:Repository<User>){}
-  async create(createPostDto: CreatePostDto) {
-    const id=createPostDto.user.id
-    const user=await this.userRepository.findOneBy({id})
-    if(!user){
-      throw new ConflictException('user does not exists');
-  }
+  @InjectRepository(Utilisateur) private readonly userRepository:Repository<Utilisateur>){}
+  async create(createPostDto: CreatePostDto,user:Utilisateur) {
     const new_post=this.postRepository.create({...createPostDto,
-    CreatedAt:new Date()})
+      user:user,
+      CreatedAt:new Date()})
     return this.postRepository.save(new_post)
   }
 
@@ -26,8 +23,14 @@ export class PostsService {
     return posts
   }
 
-  async findOne(id: number) {
-    const post=await this.postRepository.findOneBy({id})
+  async findOne(id: number,user:Utilisateur) {
+    const post=await this.postRepository.findOne({where:{
+      id,
+      user
+    }})
+    if(!post){
+      throw new NotFoundException(`Post with id ${id} not found`);
+    }
     return post
   }
 
