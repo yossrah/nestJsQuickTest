@@ -27,7 +27,7 @@ export class Utilisateur extends BaseEntity{
   @Column()
   CreatedAt:Date
   @Column()
-  role:'Admin'|'Tester'|'TeamLeader'
+  role:string
   @OneToOne(()=>Profile) //pass a callback function that is supposed to return the entity that has relationship with
   @JoinColumn()
   profile:Profile

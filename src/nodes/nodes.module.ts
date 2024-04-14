@@ -6,12 +6,13 @@ import { Component } from 'src/components/entities/component.entity';
 import { Param } from 'src/params/entities/param.entity';
 import { Node } from './entities/node.entity';
 import { Workflow } from 'src/workflow/entities/workflow.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports:[
     TypeOrmModule.forFeature([Component,Param,Node,Workflow]),
   ],
   controllers: [NodesController],
-  providers: [NodesService],
+  providers: [NodesService,JwtService],
 })
 export class NodesModule {}

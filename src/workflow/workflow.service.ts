@@ -19,21 +19,24 @@ export class WorkflowService {
       CreatedAt:new Date()})
    return await this.workflowRepository.save(new_flow)}
 
-  async findAll(currentPage:number):Promise<Workflow[]> {
+  async findAll(currentPage:number,user:Utilisateur):Promise<Workflow[]> {
     const resPerPage=5
      const skip= resPerPage * (currentPage - 1)
-     const workflows = await this.workflowRepository.find({
+     const workflows = await this.workflowRepository.find({where:{
+      author:user},
       relations: ['author', 'nodeList'],
       take: resPerPage,
       skip: skip
   });return workflows
   }
 
-  async findOne(id: number):Promise<Workflow> {
+  //find one workflow by user Id
+  async findOne(id: number,user:Utilisateur):Promise<Workflow> {
     const workflow=await this.workflowRepository.findOne({where: {
       id,
+      author:user
     },
-    relations:['author','nodeList']})
+    relations:['nodeList']})
     if (!workflow) {
       throw new NotFoundException(`workflow with id ${id} not found`);
     }

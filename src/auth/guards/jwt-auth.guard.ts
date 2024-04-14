@@ -1,14 +1,36 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
-import { Observable } from "rxjs";
 
 @Injectable()
-//implements CanActivate interface
 export class JwtAuthGuard implements CanActivate{
-    //ExecutionContext allows you to get access to a bunch of metadata as well as the request and response object
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+     constructor(private jwtService: JwtService) {}
+    async canActivate(context: ExecutionContext): Promise<boolean>  {
     //canActivate returns a boolean or promise boolean it can be async or an obsorvable boolean
-      const request=context.switchToHttp().getRequest<Request>()
-      return true
+      const request=context.switchToHttp().getRequest()
+      //console.log('reeeeeeeeeq',request.user)
+      const token = this.extractTokenFromHeader(request);
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+    try {
+      const payload = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: process.env.ACESS_TOKEN_SECRET
+        }
+      );
+      // 💡 We're assigning the payload to the request object here
+      // so that we can access it in our route handlers
+      request['user'] = payload;
+    } catch {
+      throw new UnauthorizedException();
+    }
+    return true;
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

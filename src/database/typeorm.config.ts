@@ -25,7 +25,7 @@ export default class TypeOrmConfig {
             password: configService.get('PASSWORD') ,
             database: configService.get('DATABASE'),
             entities:[Role,Utilisateur,Profile,Category,Component,Post,Param,Node,Workflow,Utilisateur],
-            synchronize: configService.get('SYNCHRONIZE'),
+            synchronize: configService.get('SYNCHRONIZE')
         }
         return typeOrmConfig;
     }

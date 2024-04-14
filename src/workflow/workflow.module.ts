@@ -7,6 +7,7 @@ import { Node } from 'src/nodes/entities/node.entity';
 
 import { UsersModule } from 'src/users/users.module';
 import { Utilisateur } from 'src/users/entities/users.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports:[
@@ -19,6 +20,6 @@ import { Utilisateur } from 'src/users/entities/users.entity';
     ),UsersModule,
   ],
   controllers: [WorkflowController],
-  providers: [WorkflowService],
+  providers: [WorkflowService,JwtService],
 })
 export class WorkflowModule {}

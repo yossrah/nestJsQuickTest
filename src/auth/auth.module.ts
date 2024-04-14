@@ -9,6 +9,8 @@ import { MailingService } from 'src/mailing/mailing.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Utilisateur } from 'src/users/entities/users.entity';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 
 
@@ -27,7 +29,11 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     
   ],
   controllers: [AuthController],
-  providers: [AuthService,
+  providers: [ /*{
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard,
+  },*/
+  AuthService,
     MailingService,
     ConfigService,
   JwtStrategy],

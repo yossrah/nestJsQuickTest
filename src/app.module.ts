@@ -22,6 +22,8 @@ import { Node } from './nodes/entities/node.entity';
 import { Workflow } from './workflow/entities/workflow.entity';
 import { typeOrmConfigAsync } from './database/typeorm.config';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/roles.guards';
 
 
 
@@ -30,6 +32,11 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forRootAsync( typeOrmConfigAsync)
     ,UsersModule, RolesModule, CategoriesModule, NodesModule, PostsModule, ComponentsModule, ParamsModule,WorkflowModule, MailingModule, AuthModule ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+   /* {
+      provide: APP_GUARD,
+      useClass: RolesGuard
+    }*/
+  ],
 })
 export class AppModule {}
